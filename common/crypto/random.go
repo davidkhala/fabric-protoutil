@@ -18,7 +18,6 @@ package crypto
 
 import (
 	"crypto/rand"
-
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +30,6 @@ const (
 func GetRandomBytes(len int) ([]byte, error) {
 	key := make([]byte, len)
 
-	// TODO: rand could fill less bytes then len
 	_, err := rand.Read(key)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting random bytes")
