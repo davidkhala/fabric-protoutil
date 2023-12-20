@@ -11,12 +11,12 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/davidkhala/fabric-protoutil/common/crypto"
 	"github.com/davidkhala/fabric-protoutil/fakes"
-	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric-protos-go-apiv2/common"
 	"github.com/hyperledger/fabric-protos-go-apiv2/peer"
-	"github.com/hyperledger/fabric/common/crypto"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestNonceRandomness(t *testing.T) {

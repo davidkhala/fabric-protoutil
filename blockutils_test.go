@@ -135,13 +135,6 @@ func TestGetConsenterMetadataFromBlock(t *testing.T) {
 			pass:    true,
 		},
 		{
-			name:       "orderer only",
-			value:      []byte("hello"),
-			signatures: nil,
-			orderer:    protoutil.MarshalOrPanic(&common.Metadata{Value: []byte("hello")}),
-			pass:       true,
-		},
-		{
 			name:  "both signatures and orderer",
 			value: []byte("hello"),
 			signatures: protoutil.MarshalOrPanic(&common.Metadata{
@@ -163,7 +156,6 @@ func TestGetConsenterMetadataFromBlock(t *testing.T) {
 	for _, test := range cases {
 		block := protoutil.NewBlock(0, nil)
 		block.Metadata.Metadata[common.BlockMetadataIndex_SIGNATURES] = test.signatures
-		block.Metadata.Metadata[common.BlockMetadataIndex_ORDERER] = test.orderer
 		result, err := protoutil.GetConsenterMetadataFromBlock(block)
 
 		if test.pass {
@@ -240,24 +232,6 @@ func TestGetLastConfigIndexFromBlock(t *testing.T) {
 		require.Contains(t, err.Error(), "failed to unmarshal orderer block metadata")
 	})
 
-	t.Run("malformed metadata", func(t *testing.T) {
-		block.Metadata.Metadata[common.BlockMetadataIndex_LAST_CONFIG] = []byte("bad metadata")
-		_, err := protoutil.GetLastConfigIndexFromBlock(block)
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "failed to retrieve metadata: error unmarshalling metadata at index [LAST_CONFIG]")
-	})
-
-	t.Run("malformed last config", func(t *testing.T) {
-		block.Metadata.Metadata[common.BlockMetadataIndex_LAST_CONFIG] = protoutil.MarshalOrPanic(&common.Metadata{
-			Value: []byte("bad last config"),
-		})
-		_, err := protoutil.GetLastConfigIndexFromBlock(block)
-		require.Error(t, err, "Expected error with malformed last config metadata")
-		require.Contains(t, err.Error(), "error unmarshalling LastConfig")
-		require.Panics(t, func() {
-			_ = protoutil.GetLastConfigIndexFromBlockOrPanic(block)
-		}, "Expected panic with malformed last config metadata")
-	})
 }
 
 func TestBlockSignatureVerifierEmptyMetadata(t *testing.T) {

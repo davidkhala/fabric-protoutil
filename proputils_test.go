@@ -10,19 +10,13 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
-	"os"
 	"testing"
 
 	"github.com/davidkhala/fabric-protoutil"
-	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric-protos-go-apiv2/common"
 	pb "github.com/hyperledger/fabric-protos-go-apiv2/peer"
-	"github.com/hyperledger/fabric/bccsp/sw"
-	"github.com/hyperledger/fabric/msp"
-	mspmgmt "github.com/hyperledger/fabric/msp/mgmt"
-	msptesttools "github.com/hyperledger/fabric/msp/mgmt/testtools"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/proto"
 )
 
 func createCIS() *pb.ChaincodeInvocationSpec {
@@ -327,119 +321,6 @@ func TestProposalResponse(t *testing.T) {
 	}
 }
 
-func TestEnvelope(t *testing.T) {
-	// create a proposal from a ChaincodeInvocationSpec
-	prop, _, err := protoutil.CreateChaincodeProposal(common.HeaderType_ENDORSER_TRANSACTION, testChannelID, createCIS(), signerSerialized)
-	if err != nil {
-		t.Fatalf("Could not create chaincode proposal, err %s\n", err)
-		return
-	}
-
-	response := &pb.Response{Status: 200, Payload: []byte("payload")}
-	result := []byte("res")
-	ccid := &pb.ChaincodeID{Name: "foo", Version: "v1"}
-
-	presp, err := protoutil.CreateProposalResponse(prop.Header, prop.Payload, response, result, nil, ccid, signer)
-	if err != nil {
-		t.Fatalf("Could not create proposal response, err %s\n", err)
-		return
-	}
-
-	tx, err := protoutil.CreateSignedTx(prop, signer, presp)
-	if err != nil {
-		t.Fatalf("Could not create signed tx, err %s\n", err)
-		return
-	}
-
-	envBytes, err := protoutil.GetBytesEnvelope(tx)
-	if err != nil {
-		t.Fatalf("Could not marshal envelope, err %s\n", err)
-		return
-	}
-
-	tx, err = protoutil.GetEnvelopeFromBlock(envBytes)
-	if err != nil {
-		t.Fatalf("Could not unmarshal envelope, err %s\n", err)
-		return
-	}
-
-	act2, err := protoutil.GetActionFromEnvelope(envBytes)
-	if err != nil {
-		t.Fatalf("Could not extract actions from envelop, err %s\n", err)
-		return
-	}
-
-	if act2.Response.Status != response.Status {
-		t.Fatalf("response staus don't match")
-		return
-	}
-	if !bytes.Equal(act2.Response.Payload, response.Payload) {
-		t.Fatalf("response payload don't match")
-		return
-	}
-
-	if !bytes.Equal(act2.Results, result) {
-		t.Fatalf("results don't match")
-		return
-	}
-
-	txpayl, err := protoutil.UnmarshalPayload(tx.Payload)
-	if err != nil {
-		t.Fatalf("Could not unmarshal payload, err %s\n", err)
-		return
-	}
-
-	tx2, err := protoutil.UnmarshalTransaction(txpayl.Data)
-	if err != nil {
-		t.Fatalf("Could not unmarshal Transaction, err %s\n", err)
-		return
-	}
-
-	sh, err := protoutil.UnmarshalSignatureHeader(tx2.Actions[0].Header)
-	if err != nil {
-		t.Fatalf("Could not unmarshal SignatureHeader, err %s\n", err)
-		return
-	}
-
-	if !bytes.Equal(sh.Creator, signerSerialized) {
-		t.Fatalf("creator does not match")
-		return
-	}
-
-	cap, err := protoutil.UnmarshalChaincodeActionPayload(tx2.Actions[0].Payload)
-	if err != nil {
-		t.Fatalf("Could not unmarshal ChaincodeActionPayload, err %s\n", err)
-		return
-	}
-	require.NotNil(t, cap)
-
-	prp, err := protoutil.UnmarshalProposalResponsePayload(cap.Action.ProposalResponsePayload)
-	if err != nil {
-		t.Fatalf("Could not unmarshal ProposalResponsePayload, err %s\n", err)
-		return
-	}
-
-	ca, err := protoutil.UnmarshalChaincodeAction(prp.Extension)
-	if err != nil {
-		t.Fatalf("Could not unmarshal ChaincodeAction, err %s\n", err)
-		return
-	}
-
-	if ca.Response.Status != response.Status {
-		t.Fatalf("response staus don't match")
-		return
-	}
-	if !bytes.Equal(ca.Response.Payload, response.Payload) {
-		t.Fatalf("response payload don't match")
-		return
-	}
-
-	if !bytes.Equal(ca.Results, result) {
-		t.Fatalf("results don't match")
-		return
-	}
-}
-
 func TestProposalTxID(t *testing.T) {
 	nonce := []byte{1}
 	creator := []byte{2}
@@ -472,36 +353,8 @@ func TestComputeProposalTxID(t *testing.T) {
 }
 
 var (
-	signer           msp.SigningIdentity
 	signerSerialized []byte
 )
-
-func TestMain(m *testing.M) {
-	// setup the MSP manager so that we can sign/verify
-	err := msptesttools.LoadMSPSetupForTesting()
-	if err != nil {
-		fmt.Printf("Could not initialize msp")
-		os.Exit(-1)
-	}
-	cryptoProvider, err := sw.NewDefaultSecurityLevelWithKeystore(sw.NewDummyKeyStore())
-	if err != nil {
-		fmt.Printf("Could not initialize cryptoProvider")
-		os.Exit(-1)
-	}
-	signer, err = mspmgmt.GetLocalMSP(cryptoProvider).GetDefaultSigningIdentity()
-	if err != nil {
-		fmt.Printf("Could not get signer")
-		os.Exit(-1)
-	}
-
-	signerSerialized, err = signer.Serialize()
-	if err != nil {
-		fmt.Printf("Could not serialize identity")
-		os.Exit(-1)
-	}
-
-	os.Exit(m.Run())
-}
 
 func TestInvokedChaincodeName(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {

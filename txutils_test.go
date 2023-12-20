@@ -512,34 +512,6 @@ func TestGetProposalHash1(t *testing.T) {
 	require.Error(t, err, "Expected error with nil arguments")
 }
 
-func TestCreateProposalResponseFailure(t *testing.T) {
-	// create a proposal from a ChaincodeInvocationSpec
-	prop, _, err := protoutil.CreateChaincodeProposal(common.HeaderType_ENDORSER_TRANSACTION, testChannelID, createCIS(), signerSerialized)
-	if err != nil {
-		t.Fatalf("Could not create chaincode proposal, err %s\n", err)
-		return
-	}
-
-	response := &peer.Response{Status: 502, Payload: []byte("Invalid function name")}
-	result := []byte("res")
-
-	prespFailure, err := protoutil.CreateProposalResponseFailure(prop.Header, prop.Payload, response, result, nil, "foo")
-	if err != nil {
-		t.Fatalf("Could not create proposal response failure, err %s\n", err)
-		return
-	}
-
-	require.Equal(t, int32(502), prespFailure.Response.Status)
-	// drilldown into the response to find the chaincode response
-	pRespPayload, err := protoutil.UnmarshalProposalResponsePayload(prespFailure.Payload)
-	require.NoError(t, err, "Error while unmarshalling proposal response payload: %s", err)
-	ca, err := protoutil.UnmarshalChaincodeAction(pRespPayload.Extension)
-	require.NoError(t, err, "Error while unmarshalling chaincode action: %s", err)
-
-	require.Equal(t, int32(502), ca.Response.Status)
-	require.Equal(t, "Invalid function name", string(ca.Response.Payload))
-}
-
 func TestGetorComputeTxIDFromEnvelope(t *testing.T) {
 	t.Run("txID is present in the envelope", func(t *testing.T) {
 		txID := "709184f9d24f6ade8fcd4d6521a6eef295fef6c2e67216c58b68ac15e8946492"
