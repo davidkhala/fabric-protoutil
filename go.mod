@@ -1,4 +1,4 @@
-module github.com/davidkhala/fabric-protoutil
+module github.com/davidkhala/protoutil
 
 go 1.20
 
