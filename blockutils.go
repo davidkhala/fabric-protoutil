@@ -12,7 +12,7 @@ import (
 	"encoding/asn1"
 	"encoding/base64"
 	"fmt"
-	"github.com/davidkhala/fabric-protoutil/common/util"
+	"github.com/davidkhala/protoutil/common/util"
 	"math/big"
 
 	"github.com/hyperledger/fabric-protos-go-apiv2/common"

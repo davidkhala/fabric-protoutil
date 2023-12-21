@@ -12,8 +12,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/davidkhala/fabric-protoutil"
-	"github.com/davidkhala/fabric-protoutil/mocks"
+	"github.com/davidkhala/protoutil"
+	"github.com/davidkhala/protoutil/mocks"
 	"github.com/hyperledger/fabric-protos-go-apiv2/common"
 	"github.com/hyperledger/fabric-protos-go-apiv2/msp"
 	"github.com/stretchr/testify/require"

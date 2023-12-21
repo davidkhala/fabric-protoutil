@@ -12,7 +12,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/davidkhala/fabric-protoutil"
+	"github.com/davidkhala/protoutil"
 	"github.com/hyperledger/fabric-protos-go-apiv2/common"
 	pb "github.com/hyperledger/fabric-protos-go-apiv2/peer"
 	"github.com/stretchr/testify/require"

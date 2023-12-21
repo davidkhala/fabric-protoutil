@@ -11,8 +11,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/davidkhala/fabric-protoutil/common/crypto"
-	"github.com/davidkhala/fabric-protoutil/fakes"
+	"github.com/davidkhala/protoutil/common/crypto"
+	"github.com/davidkhala/protoutil/fakes"
 	"github.com/hyperledger/fabric-protos-go-apiv2/common"
 	"github.com/hyperledger/fabric-protos-go-apiv2/peer"
 	"github.com/stretchr/testify/require"

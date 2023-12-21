@@ -17,8 +17,8 @@ import (
 	"github.com/hyperledger/fabric-protos-go-apiv2/peer"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/davidkhala/fabric-protoutil"
-	"github.com/davidkhala/fabric-protoutil/fakes"
+	"github.com/davidkhala/protoutil"
+	"github.com/davidkhala/protoutil/fakes"
 	"github.com/stretchr/testify/require"
 )
 

@@ -4,7 +4,7 @@ package mocks
 import (
 	"sync"
 
-	"github.com/davidkhala/fabric-protoutil"
+	"github.com/davidkhala/protoutil"
 )
 
 type Policy struct {
