@@ -48,7 +48,7 @@ func CreateNonce() ([]byte, error) {
 	return nonce, errors.WithMessage(err, "error generating random nonce")
 }
 
-// UnmarshalEnvelopeOfType unmarshals an envelope of the specified type,
+// UnmarshalEnvelopeOfType unmarshal an envelope of the specified type,
 // including unmarshalling the payload data
 func UnmarshalEnvelopeOfType(envelope *common.Envelope, headerType common.HeaderType, message proto.Message) (*common.ChannelHeader, error) {
 	payload, err := UnmarshalPayload(envelope.Payload)
