@@ -249,3 +249,11 @@ func UnmarshalSignatureHeaderOrPanic(bytes []byte) *common.SignatureHeader {
 	}
 	return sighdr
 }
+func UnmarshalTransactionActionOrPanic(bytes []byte) *peer.TransactionAction {
+	transactionAction := &peer.TransactionAction{}
+	err := proto.Unmarshal(bytes, transactionAction)
+	if err != nil {
+		panic(err)
+	}
+	return transactionAction
+}

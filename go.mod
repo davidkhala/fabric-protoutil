@@ -3,10 +3,10 @@ module github.com/davidkhala/protoutil
 go 1.20
 
 require (
-	github.com/hyperledger/fabric-protos-go-apiv2 v0.3.1
+	github.com/hyperledger/fabric-protos-go-apiv2 v0.3.2
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 )
 
 require (
